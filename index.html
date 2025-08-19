@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Calculators Suite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+        }
+        
+        .calculator {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .calculator:hover {
+            transform: translateY(-5px);
+        }
+        
+        .calculator-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .calculator-icon {
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .calculator-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+        }
+        
+        .results {
+            margin-top: 25px;
+            padding: 20px;
+            background: #eef7ff;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+        
+        .results.visible {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ced4da;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .result-label {
+            font-weight: 600;
+        }
+        
+        .result-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .breakdown {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ced4da;
+        }
+        
+        .breakdown-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .calculators-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Financial Calculators Suite</h1>
+            <p class="description">All-in-one financial tools for your everyday needs</p>
+        </header>
+        
+        <div class="calculators-grid">
+            <!-- Loan EMI Calculator -->
+            <div class="calculator">
+                <div class="calculator-header">
+                    <div class="calculator-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h2 class="calculator-title">Loan EMI Calculator</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="loan-amount"><i class="fas fa-rupee-sign"></i> Loan Amount (₹)</label>
+                    <input type="number" id="loan-amount" placeholder="E.g. 100000" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="interest-rate"><i class="fas fa-percent"></i> Interest Rate (% per annum)</label>
+                    <input type="number" id="interest-rate" placeholder="E.g. 8.5" min="0" step="0.01">
+                </div>
+                
+                <div class="input-group">
+                    <label for="loan-tenure"><i class="fas fa-calendar-alt"></i> Loan Tenure</label>
+                    <input type="number" id="loan-tenure" placeholder="E.g. 5" min="0">
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="years" name="tenure-type" value="years" checked>
+                            <label for="years">Years</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="months" name="tenure-type" value="months">
+                            <label for="months">Months</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn" id="calculate-emi">Calculate EMI</button>
+                
+                <div class="results" id="emi-results">
+                    <div class="result-item">
+                        <span class="result-label">Monthly EMI:</span>
+                        <span class="result-value" id="monthly-emi">₹0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Interest Payable:</span>
+                        <span class="result-value" id="total-interest">₹0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Payment (Principal + Interest):</span>
+                        <span class="result-value" id="total-payment">₹0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- GST Calculator -->
+            <div class="calculator">
+                <div class="calculator-header">
+                    <div class="calculator-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <h2 class="calculator-title">GST Calculator</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="original-price"><i class="fas fa-rupee-sign"></i> Original Price (₹)</label>
+                    <input type="number" id="original-price" placeholder="E.g. 1000" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="gst-rate"><i class="fas fa-percent"></i> GST Rate (%)</label>
+                    <select id="gst-rate">
+                        <option value="5">5%</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18%</option>
+                        <option value="28">28%</option>
+                    </select>
+                </div>
+                
+                <button class="btn" id="calculate-gst">Calculate GST</button>
+                
+                <div class="results" id="gst-results">
+                    <div class="result-item">
+                        <span class="result-label">GST Amount:</span>
+                        <span class="result-value" id="gst-amount">₹0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Price After GST:</span>
+                        <span class="result-value" id="total-after-gst">₹0</span>
+                    </div>
+                    <div class="breakdown">
+                        <div class="breakdown-title">Breakdown (CGST + SGST):</div>
+                        <div class="result-item">
+                            <span class="result-label">CGST ({{gstRateHalf}}%):</span>
+                            <span class="result-value" id="cgst-amount">₹0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">SGST ({{gstRateHalf}}%):</span>
+                            <span class="result-value" id="sgst-amount">₹0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Word Counter -->
+            <div class="calculator">
+                <div class="calculator-header">
+                    <div class="calculator-icon">
+                        <i class="fas fa-font"></i>
+                    </div>
+                    <h2 class="calculator-title">Word Counter & Read Time</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="input-text"><i class="fas fa-align-left"></i> Paste or Type Your Text</label>
+                    <textarea id="input-text" rows="5" placeholder="Start typing or paste your text here..." style="width: 100%; padding: 12px 15px; border: 1px solid #ced4da; border-radius: var(--border-radius); font-size: 1rem;"></textarea>
+                </div>
+                
+                <div class="results visible" id="word-counter-results">
+                    <div class="result-item">
+                        <span class="result-label">Words:</span>
+                        <span class="result-value" id="word-count">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Characters:</span>
+                        <span class="result-value" id="character-count">0</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Reading Time:</span>
+                        <span class="result-value" id="reading-time">0 seconds</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Age Calculator -->
+            <div class="calculator">
+                <div class="calculator-header">
+                    <div class="calculator-icon">
+                        <i class="fas fa-birthday-cake"></i>
+                    </div>
+                    <h2 class="calculator-title">Age Calculator</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="birth-date"><i class="fas fa-calendar-day"></i> Date of Birth</label>
+                    <input type="datetime-local" id="birth-date">
+                </div>
+                
+                <button class="btn" id="calculate-age">Calculate Age</button>
+                
+                <div class="results" id="age-results">
+                    <div class="result-item">
+                        <span class="result-label">Your Age:</span>
+                        <span class="result-value" id="age-result">0 years, 0 months, 0 days</span>
+                    </div>
+                    <div class="breakdown">
+                        <div class="breakdown-title">Detailed Breakdown:</div>
+                        <div class="result-item">
+                            <span class="result-label">Years:</span>
+                            <span class="result-value" id="years">0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Months:</span>
+                            <span class="result-value" id="months">0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Days:</span>
+                            <span class="result-value" id="days">0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Hours:</span>
+                            <span class="result-value" id="hours">0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Minutes:</span>
+                            <span class="result-value" id="minutes">0</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Seconds:</span>
+                            <span class="result-value" id="seconds">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Financial Calculators Suite. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Loan EMI Calculator
+        document.getElementById('calculate-emi').addEventListener('click', function() {
+            const loanAmount = parseFloat(document.getElementById('loan-amount').value);
+            const interestRate = parseFloat(document.getElementById('interest-rate').value);
+            const tenure = parseFloat(document.getElementById('loan-tenure').value);
+            const isYears = document.getElementById('years').checked;
+            
+            if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(tenure) || loanAmount <= 0 || interestRate <= 0 || tenure <= 0) {
+                alert('Please enter valid values for all fields.');
+                return;
+            }
+            
+            const n = isYears ? tenure * 12 : tenure;
+            const r = interestRate / 12 / 100;
+            
+            const emi = loanAmount * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+            const totalPayment = emi * n;
+            const totalInterest = totalPayment - loanAmount;
+            
+            document.getElementById('monthly-emi').textContent = '₹' + emi.toFixed(2);
+            document.getElementById('total-interest').textContent = '₹' + totalInterest.toFixed(2);
+            document.getElementById('total-payment').textContent = '₹' + totalPayment.toFixed(2);
+            document.getElementById('emi-results').classList.add('visible');
+        });
+        
+        // GST Calculator
+        document.getElementById('calculate-gst').addEventListener('click', function() {
+            const originalPrice = parseFloat(document.getElementById('original-price').value);
+            const gstRate = parseFloat(document.getElementById('gst-rate').value);
+            
+            if (isNaN(originalPrice) || originalPrice <= 0) {
+                alert('Please enter a valid original price.');
+                return;
+            }
+            
+            const gstAmount = (originalPrice * gstRate) / 100;
+            const totalAfterGst = originalPrice + gstAmount;
+            const halfGstRate = gstRate / 2;
+            const halfGstAmount = gstAmount / 2;
+            
+            document.getElementById('gst-amount').textContent = '₹' + gstAmount.toFixed(2);
+            document.getElementById('total-after-gst').textContent = '₹' + totalAfterGst.toFixed(2);
+            document.getElementById('cgst-amount').textContent = '₹' + halfGstAmount.toFixed(2);
+            document.getElementById('sgst-amount').textContent = '₹' + halfGstAmount.toFixed(2);
+            document.getElementById('gst-results').classList.add('visible');
+        });
+        
+        // Word Counter
+        document.getElementById('input-text').addEventListener('input', function() {
+            const text = this.value;
+            const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+            const characterCount = text.length;
+            
+            // Calculate reading time (200 words per minute)
+            const wordsPerMinute = 200;
+            const readingTimeMinutes = wordCount / wordsPerMinute;
+            
+            let readingTimeText;
+            if (readingTimeMinutes < 1) {
+                const seconds = Math.ceil(readingTimeMinutes * 60);
+                readingTimeText = seconds + ' second' + (seconds !== 1 ? 's' : '');
+            } else {
+                readingTimeText = readingTimeMinutes.toFixed(1) + ' minute' + (readingTimeMinutes !== 1 ? 's' : '');
+            }
+            
+            document.getElementById('word-count').textContent = wordCount;
+            document.getElementById('character-count').textContent = characterCount;
+            document.getElementById('reading-time').textContent = readingTimeText;
+        });
+        
+        // Age Calculator
+        document.getElementById('calculate-age').addEventListener('click', function() {
+            const birthDate = new Date(document.getElementById('birth-date').value);
+            
+            if (isNaN(birthDate.getTime())) {
+                alert('Please select a valid date of birth.');
+                return;
+            }
+            
+            const now = new Date();
+            let years = now.getFullYear() - birthDate.getFullYear();
+            let months = now.getMonth() - birthDate.getMonth();
+            let days = now.getDate() - birthDate.getDate();
+            let hours = now.getHours() - birthDate.getHours();
+            let minutes = now.getMinutes() - birthDate.getMinutes();
+            let seconds = now.getSeconds() - birthDate.getSeconds();
+            
+            if (seconds < 0) {
+                minutes--;
+                seconds += 60;
+            }
+            
+            if (minutes < 0) {
+                hours--;
+                minutes += 60;
+            }
+            
+            if (hours < 0) {
+                days--;
+                hours += 24;
+            }
+            
+            if (days < 0) {
+                months--;
+                // Get days in the previous month
+                const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 0);
+                days += prevMonth.getDate();
+            }
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+            document.getElementById('age-result').textContent = `${years} years, ${months} months, ${days} days`;
+            document.getElementById('age-results').classList.add('visible');
+        });
+        
+        // Initialize with current date for age calculator
+        window.addEventListener('load', function() {
+            const now = new Date();
+            // Set max date to today for age calculator
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            
+            document.getElementById('birth-date').max = `${year}-${month}-${day}T${hours}:${minutes}`;
+            
+            // Set a default birth date (25 years ago)
+            const defaultBirthDate = new Date(year - 25, now.getMonth(), now.getDate(), now.getHours(), now.getMinutes());
+            const defaultYear = defaultBirthDate.getFullYear();
+            const defaultMonth = (defaultBirthDate.getMonth() + 1).toString().padStart(2, '0');
+            const defaultDay = defaultBirthDate.getDate().toString().padStart(2, '0');
+            const defaultHours = defaultBirthDate.getHours().toString().padStart(2, '0');
+            const defaultMinutes = defaultBirthDate.getMinutes().toString().padStart(2, '0');
+            
+            document.getElementById('birth-date').value = `${defaultYear}-${defaultMonth}-${defaultDay}T${defaultHours}:${defaultMinutes}`;
+        });
+    </script>
+</body>
+</html>
